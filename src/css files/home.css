@@ -1,0 +1,7 @@
+.custom_buttons_text_color:hover {
+    color: white !important;
+}
+
+.custom_title {
+    text-shadow: 2px 2px 4px rgb(197, 237, 247);
+}
