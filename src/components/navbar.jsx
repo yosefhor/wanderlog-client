@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Navbar() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') ? true : false;
     return (
         <nav className="navbar navbar-expand-lg bg-light border-bottom border-2 border-black">
             <div className="container-fluid ">
@@ -11,9 +12,9 @@ export default function Navbar() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
-                        <li className="nav-item">
+                        {isLoggedIn && <li className="nav-item">
                             <Link className="nav-link" to="/dashboard">Dashboard</Link>
-                        </li>
+                        </li>}
                         <li className="nav-item">
                             <Link className="nav-link" to="/services">Services</Link>
                         </li>

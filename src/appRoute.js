@@ -23,7 +23,6 @@ export default function AppRoute() {
                         <Route path='/dashboard' element={<Dashboard />} />
                         <Route path='*' element={<NotFound />} />
                     </Route>
-
                 </Routes>
                 <ToastContainer position="bottom-center" />
             </SpinnerProvider>
