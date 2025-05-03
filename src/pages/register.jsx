@@ -35,7 +35,7 @@ export default function Register() {
         setLocalUser({ username: localUser.username.trim(), password: localUser.password.trim() })
         try {
             showSpinner();
-            const customResponse = await httpRequest({ url: 'auth/register', method: 'POST', credentials: 'include', body: JSON.stringify(localUser), refreshToken: refreshToken });
+            const customResponse = await httpRequest({ url: 'auth/register', method: 'POST', credentials: 'include', body: localUser, refreshToken: refreshToken });
             hideSpinner();
             if (customResponse.ok) {
                 toast.dismiss();

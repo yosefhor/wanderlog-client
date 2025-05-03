@@ -3,6 +3,9 @@ import { FaRegUserCircle } from 'react-icons/fa';
 import { useLogout } from './logout';
 import ChangePassword from './changePassword';
 import DeleteAccount from './deleteAccount';
+import { CiLogout } from 'react-icons/ci';
+import { TbLockPassword } from 'react-icons/tb';
+import { MdDeleteOutline } from 'react-icons/md';
 
 export default function UserIcon() {
 
@@ -30,9 +33,9 @@ export default function UserIcon() {
                         fontSize: 'clamp(1rem, 2vw, 1.6rem)'
                     }}>{userAvatar}</div>
                 <ul className='dropdown-menu'>
-                    <li><button onClick={logout} className='dropdown-item'>log out</button></li>
-                    <li><button onClick={changePassword} className='dropdown-item'>change password</button></li>
-                    <li><button onClick={deleteAccount} className='dropdown-item'>delete account</button></li>
+                    <li><button onClick={logout} className='dropdown-item d-flex align-items-center justify-content-between'>log out<CiLogout /></button></li>
+                    <li><button onClick={changePassword} className='dropdown-item d-flex align-items-center justify-content-between gap-3'>change password<TbLockPassword /></button></li>
+                    <li><button onClick={deleteAccount} className='dropdown-item d-flex align-items-center justify-content-between'>delete account<MdDeleteOutline /></button></li>
                 </ul>
             </div>
             <ChangePassword showChangePassword={showChangePassword} handleClose={() => setShowChangePassword(false)} />

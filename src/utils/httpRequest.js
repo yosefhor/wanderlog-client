@@ -7,7 +7,7 @@ const httpRequest = async ({ url, method, credentials, body, refreshToken }) => 
                 'Content-Type': 'application/json',
             },
             credentials: credentials,
-            body: body
+            body: JSON.stringify(body)
         });
 
         const { status, ok, statusText } = response;

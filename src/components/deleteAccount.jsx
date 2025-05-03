@@ -12,7 +12,7 @@ import useRefreshToken from "../hooks/useRefreshToken";
 export default function DeleteAccount({ showDeleteAccount, handleClose }) {
     const refreshToken = useRefreshToken();
     const formRef = useRef(null);
-    const { user, updateUser } = useContext(UserContext);
+    const { updateUser } = useContext(UserContext);
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function DeleteAccount({ showDeleteAccount, handleClose }) {
             try {
                 showSpinner();
                 const user = { username: localStorage.getItem('isLoggedIn'), password: password };
-                const customResponse = await httpRequest({ url: 'auth/delete-account', method: 'DELETE', credentials: 'include', body: JSON.stringify(user), refreshToken: refreshToken });
+                const customResponse = await httpRequest({ url: 'auth/delete-account', method: 'DELETE', credentials: 'include', body: user, refreshToken: refreshToken });
                 hideSpinner();
                 if (customResponse.ok) {
                     toast.dismiss();

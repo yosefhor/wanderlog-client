@@ -34,16 +34,15 @@ export default function Login() {
         setLocalUser({ username: localUser.username.trim(), password: localUser.password.trim() })
         try {
             showSpinner();
-            const customResponse = await httpRequest({ url: 'auth/login', method: 'POST', credentials: 'include', body: JSON.stringify(localUser), refreshToken: refreshToken });
+            const customResponse = await httpRequest({ url: 'auth/login', method: 'POST', credentials: 'include', body: localUser, refreshToken: refreshToken });
             hideSpinner();
             if (customResponse.ok) {
                 localStorage.setItem('isLoggedIn', localUser.username);
-                toast.dismiss();
-                toast.success(customResponse.data);
+                console.log(customResponse.data);
                 navigate('/dashboard');
             }
             else {
-                throw new Error(customResponse.statusText);
+                throw new Error(customResponse.data);
             }
         } catch (error) {
             hideSpinner();

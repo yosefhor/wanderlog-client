@@ -25,7 +25,7 @@ export default function ChangePassword({ showChangePassword, handleClose }) {
             try {
                 showSpinner();
                 const userDetails = { username: localStorage.getItem('isLoggedIn'), oldPassword: oldPassword, newPassword: newPassword };
-                const customResponse = await httpRequest({ url: 'auth/change-password', method: 'PUT', credentials: 'include', body: JSON.stringify(userDetails), refreshToken: refreshToken });
+                const customResponse = await httpRequest({ url: 'auth/change-password', method: 'PUT', credentials: 'include', body: userDetails, refreshToken: refreshToken });
                 hideSpinner();
                 if (customResponse.ok) {
                     toast.dismiss();

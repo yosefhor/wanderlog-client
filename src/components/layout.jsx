@@ -5,17 +5,18 @@ import Footer from './footer';
 import Spinner from './spinner';
 
 export default function Layout() {
-    return (<>
-        <header className='position-sticky top-0'>
-            <Header />
-        </header>
-        <main>
-            <Outlet />
-            <Spinner />
-        </main>
-        <footer className='mt-5'>
-            <Footer />
-        </footer>
-    </>
+    return (
+        <>
+            <header className='position-sticky top-0 z-3'>
+                <Header />
+            </header>
+            <main>
+                <Outlet />
+                <Spinner />
+            </main>
+            <footer className='mt-5'>
+                <Footer />
+            </footer>
+        </>
     )
 }
