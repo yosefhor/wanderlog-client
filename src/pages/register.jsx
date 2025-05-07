@@ -42,7 +42,7 @@ export default function Register() {
                 toast.success(customResponse.data);
                 handleNavigate('/');
             } else {
-                throw new Error(customResponse.statusText);
+                throw new Error(customResponse.data.statusText);
             }
         } catch (error) {
             hideSpinner();

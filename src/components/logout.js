@@ -19,7 +19,7 @@ export function useLogout() {
                 toast.success(customResponse.data);
             }
             else {
-                throw new Error(customResponse.statusText);
+                throw new Error(customResponse.data.statusText);
             }
         } catch (error) {
             hideSpinner();

@@ -13,7 +13,7 @@ export default function Header() {
       <div className=' align-content-center'
         style={{
           height: 'clamp(50px,7vw + 20px,100px)',
-          backgroundImage: `url('/bg2.jpeg')`,
+          backgroundImage: `url('/bg3.webp')`,
           backgroundSize: 'cover'
         }}>
         <div className="d-flex align-items-center">

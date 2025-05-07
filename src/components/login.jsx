@@ -42,7 +42,7 @@ export default function Login() {
                 navigate('/dashboard');
             }
             else {
-                throw new Error(customResponse.data);
+                throw new Error(customResponse.data.statusText);
             }
         } catch (error) {
             hideSpinner();

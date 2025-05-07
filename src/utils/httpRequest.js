@@ -9,7 +9,7 @@ const httpRequest = async ({ url, method, credentials, body, refreshToken }) => 
             credentials: credentials,
             body: JSON.stringify(body)
         });
-
+        
         const { status, ok, statusText } = response;
         const result = await response.json();
 
