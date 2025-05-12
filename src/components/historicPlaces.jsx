@@ -12,6 +12,7 @@ import { CiLocationOn } from "react-icons/ci";
 import { CiCalendarDate } from "react-icons/ci";
 import DeletePlaceModal from './deletePlaceModal';
 import { map } from 'lodash';
+import TimelinePlaces from './timelinePlaces';
 
 export default function HistoricPlaces() {
     const refreshToken = useRefreshToken();
@@ -59,7 +60,6 @@ export default function HistoricPlaces() {
             }
             return place;
         }));
-        // setHistoricPlaces((prev) => [...prev, prev[index] = updatedPlace]);
     }
 
     const deletePlace = (placeId) => {
@@ -88,6 +88,7 @@ export default function HistoricPlaces() {
 
     return (
         <>
+            <TimelinePlaces sortedHistoricPlaces={sortedHistoricPlaces} />
             <div className='row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 row-cols-xl-6 g-2'>
                 <button className='btn col' onClick={handleAddBtn}>
                     <div className='card h-100 d-flex align-items-center justify-content-center p-3'>
