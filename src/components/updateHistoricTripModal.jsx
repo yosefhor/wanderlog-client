@@ -9,10 +9,10 @@ import { toast } from 'react-toastify';
 import { useMemo } from "react";
 import _ from 'lodash';
 
-export default function UpdateHistoricPlaceModal({ show, onHide, onAdd, onUpdate, currentPlace, modalRole }) {
+export default function UpdateHistoricTripModal({ show, onHide, onAdd, onUpdate, currentTrip, modalRole, type, url }) {
     const refreshToken = useRefreshToken();
     const [showScoreAlert, setShowScoreAlert] = useState('none');
-    const [newPlace, setNewPlace] = useState(currentPlace || {});
+    const [newTrip, setNewTrip] = useState(currentTrip || {});
     const { showSpinner, hideSpinner } = useSpinner();
     const formRef = useRef(null);
     const countries = [
@@ -288,26 +288,27 @@ export default function UpdateHistoricPlaceModal({ show, onHide, onAdd, onUpdate
 
     const handleClose = () => {
         onHide();
-        setNewPlace({});
+        setNewTrip({});
     }
 
-    const handleAddPlace = async (e) => {
+    const handleAddTrip = async (e) => {
         e.preventDefault();
         const form = formRef.current;
         if (!form.checkValidity()) {
             form.reportValidity();
-        } else if (!newPlace.score) {
+        } else if (type === 'historic' && !newTrip.score) {
             setShowScoreAlert('block');
         } else {
             try {
                 showSpinner();
-                const customResponse = await httpRequest({ url: 'api/historic-places/add', method: 'POST', credentials: 'include', body: newPlace, refreshToken: refreshToken });
+                const customResponse = await httpRequest({ url: url + 'add', method: 'POST', credentials: 'include', body: newTrip, refreshToken: refreshToken });
                 hideSpinner();
-                if (customResponse.status === 200) {
+                console.log(customResponse.data, customResponse.status);
+                if (customResponse.status === 200 || 201) {
                     handleClose();
                     toast.dismiss();
                     toast.success(customResponse.data.message);
-                    onAdd(customResponse.data.addedPlaceWithImages);
+                    onAdd(customResponse.data.addedTripWithImages);
                 }
             } catch (error) {
                 hideSpinner();
@@ -316,24 +317,24 @@ export default function UpdateHistoricPlaceModal({ show, onHide, onAdd, onUpdate
         }
     }
 
-    const handleUpdatePlace = async (e) => {
+    const handleUpdateTrip = async (e) => {
         e.preventDefault();
         const form = formRef.current;
         if (!form.checkValidity()) {
             form.reportValidity();
-        } else if (!newPlace.score) {
+        } else if (!newTrip.score) {
             setShowScoreAlert('block');
         } else {
             try {
                 showSpinner();
-                const customResponse = await httpRequest({ url: 'api/historic-places/update', method: 'PUT', credentials: 'include', body: newPlace, refreshToken: refreshToken });
+                const customResponse = await httpRequest({ url: url + 'update', method: 'PUT', credentials: 'include', body: newTrip, refreshToken: refreshToken });
                 hideSpinner();
-                console.log(customResponse.data.updatedPlaceWithImages);
+                console.log(customResponse.data.updatedTripWithImages);
                 if (customResponse.status === 200) {
                     handleClose();
                     toast.dismiss();
                     toast.success(customResponse.data.message);
-                    onUpdate(customResponse.data.updatedPlaceWithImages);
+                    onUpdate(customResponse.data.updatedTripWithImages);
                 }
             } catch (error) {
                 hideSpinner();
@@ -351,53 +352,53 @@ export default function UpdateHistoricPlaceModal({ show, onHide, onAdd, onUpdate
                         <span className='text-danger'>*</span>
                         <label htmlFor="InputCity" className="form-label">City</label>
                         <input
-                            onChange={(e) => { setNewPlace((prev) => ({ ...prev, city: _.capitalize(e.target.value) })) }}
+                            onChange={(e) => { setNewTrip((prev) => ({ ...prev, city: _.capitalize(e.target.value) })) }}
                             required
                             type="text"
                             className="form-control"
                             id="InputCity"
                             placeholder="Enter city"
                             maxLength={25}
-                            value={newPlace.city}
+                            value={newTrip.city}
                         />
                     </div>
                     <div className="mb-3">
                         <span className='text-danger'>*</span>
                         <label htmlFor="InputCountry" className="form-label">Country</label>
                         <Select
-                            onChange={(e) => { setNewPlace((prev) => ({ ...prev, country: e?.value })) }}
+                            onChange={(e) => { setNewTrip((prev) => ({ ...prev, country: e?.value })) }}
                             required
                             id="InputCountry"
                             options={countries}
                             isClearable
-                            defaultValue={countries.find(c => c.value === newPlace.country)}
+                            defaultValue={countries.find(c => c.value === newTrip.country)}
                         />
                     </div>
-                    <div className="mb-3">
+                    {type === 'historic' && <div className="mb-3">
                         <span className='text-danger'>*</span>
                         <label htmlFor="InputDescription" className="form-label">Description</label>
                         <textarea
-                            onChange={(e) => { setNewPlace((prev) => ({ ...prev, description: e.target.value })) }}
+                            onChange={(e) => { setNewTrip((prev) => ({ ...prev, description: e.target.value })) }}
                             required
                             className="form-control"
                             id="InputDescription"
                             placeholder="Enter description (Max 1000 characters)"
                             rows="3"
                             maxLength={1000}
-                            value={newPlace.description}
+                            value={newTrip.description}
                         />
-                    </div>
+                    </div>}
                     <div className="gap-1 d-flex justify-content-between">
                         <div className="mb-3 col-5">
                             <span className='text-danger'>*</span>
                             <label htmlFor="InputMonth" className="form-label">Month</label>
                             <Select
-                                onChange={(e) => { setNewPlace((prev) => ({ ...prev, month: e.value })) }}
+                                onChange={(e) => { setNewTrip((prev) => ({ ...prev, month: e.value })) }}
                                 required
                                 id="InputMonthYear"
                                 placeholder="month"
                                 options={months}
-                                defaultValue={months.find(m => m.value === newPlace.month)}
+                                defaultValue={months.find(m => m.value === newTrip.month)}
 
                             />
                         </div>
@@ -405,47 +406,47 @@ export default function UpdateHistoricPlaceModal({ show, onHide, onAdd, onUpdate
                             <span className='text-danger'>*</span>
                             <label htmlFor="InputYear" className="form-label">Year</label>
                             <Select
-                                onChange={(e) => { setNewPlace((prev) => ({ ...prev, year: e.value })) }}
+                                onChange={(e) => { setNewTrip((prev) => ({ ...prev, year: e.value })) }}
                                 required
                                 id="InputMonthYear"
                                 placeholder="year"
                                 options={years}
-                                defaultValue={years.find(y => y.value === newPlace.year)}
+                                defaultValue={years.find(y => y.value === newTrip.year)}
                             />
                         </div>
                     </div>
-                    <div className="mb-3">
+                    {type === 'historic' && <div className="mb-3">
                         <span className='text-danger'>*</span>
                         <label htmlFor="InputScore" className="form-label mb-0">Score</label>
                         <ReactStars
-                            onChange={(newRating) => { setNewPlace((prev) => ({ ...prev, score: newRating })) }}
+                            onChange={(newRating) => { setNewTrip((prev) => ({ ...prev, score: newRating })) }}
                             className=''
                             id="InputScore"
-                            value={newPlace.score}
+                            value={newTrip.score}
                             count={5}
                             size={44}
                             half={false}
                         />
-                        <span id="scoreError" className={`text-danger d-${showScoreAlert}`}>Please rate the place</span>
-                    </div>
+                        <span id="scoreError" className={`text-danger d-${showScoreAlert}`}>Please rate the trip</span>
+                    </div>}
                     <div className="mb-3">
                         <label htmlFor="InputHotel" className="form-label">Hotel</label>
                         <input
-                            onChange={(e) => { setNewPlace((prev) => ({ ...prev, hotel: e.target.value })) }}
+                            onChange={(e) => { setNewTrip((prev) => ({ ...prev, hotel: e.target.value })) }}
                             type="text"
                             className="form-control"
                             id="InputHotel"
                             placeholder="Enter hotel (Optional)"
                             maxLength={25}
-                            value={newPlace.hotel}
+                            value={newTrip.hotel}
                         />
                     </div>
                 </form>
             </Modal.Body>
             <Modal.Footer>
                 <button className='btn btn-secondary' onClick={handleClose}>Cancel</button>
-                {modalRole === 'add' && <button type="submit" className='btn btn-primary' onClick={handleAddPlace}>Add</button>}
-                {modalRole === 'update' && <button type="submit" className='btn btn-success' onClick={handleUpdatePlace}>Update</button>}
+                {modalRole === 'add' && <button type="submit" className='btn btn-primary' onClick={handleAddTrip}>Add</button>}
+                {modalRole === 'update' && <button type="submit" className='btn btn-success' onClick={handleUpdateTrip}>Update</button>}
             </Modal.Footer>
         </Modal >
     )

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import useRefreshToken from '../hooks/useRefreshToken';
 import httpRequest from '../utils/httpRequest';
-import UpdateHistoricPlaceModal from '../components/updateHistoricPlaceModal';
+import UpdateHistoricTripModal from './updateHistoricTripModal';
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { BiHotel } from "react-icons/bi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
@@ -10,17 +10,16 @@ import { MdDeleteForever } from "react-icons/md";
 import { MdOutlineAddLocationAlt } from "react-icons/md";
 import { CiLocationOn } from "react-icons/ci";
 import { CiCalendarDate } from "react-icons/ci";
-import DeletePlaceModal from './deletePlaceModal';
-import { map } from 'lodash';
-import TimelinePlaces from './timelinePlaces';
+import DeleteTripModal from './deleteTripModal';
+import TimelineTrips from './timelineTrips';
 
-export default function HistoricPlaces() {
+export default function HistoricTrips() {
     const refreshToken = useRefreshToken();
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [modalRole, setModalRole] = useState(null);
-    const [currentPlace, setCurrentPlace] = useState({});
-    const [historicPlaces, setHistoricPlaces] = useState([]);
+    const [currentTrip, setCurrentTrip] = useState({});
+    const [historicTrips, setHistoricTrips] = useState([]);
     const [expanded, setExpanded] = useState({});
     const wordLimit = 10;
 
@@ -32,98 +31,98 @@ export default function HistoricPlaces() {
     };
 
     const handleAddBtn = () => {
-        setCurrentPlace({});
+        setCurrentTrip({});
         setModalRole('add');
         setShowUpdateModal(true);
     }
 
-    const handleUpdateBtn = (place) => {
-        setCurrentPlace(place);
+    const handleUpdateBtn = (trip) => {
+        setCurrentTrip(trip);
         setModalRole('update');
         setShowUpdateModal(true);
     }
 
-    const handleDeleteBtn = (place) => {
-        setCurrentPlace(place);
+    const handleDeleteBtn = (trip) => {
+        setCurrentTrip(trip);
         setShowDeleteModal(true);
     }
 
-    const addPlace = (addedPlace) => {
-        setHistoricPlaces((prev) => [...prev, addedPlace]);
+    const addTrip = (addedTrip) => {
+        setHistoricTrips((prev) => [...prev, addedTrip]);
     }
 
-    const updatePlace = (updatedPlace) => {
-        const index = historicPlaces.findIndex((place) => place.id === updatedPlace.id);
-        setHistoricPlaces(map(historicPlaces, (place) => {
-            if (place.id === updatedPlace.id) {
-                return { ...place, ...updatedPlace };
+    const updateTrip = (updatedTrip) => {
+        const index = historicTrips.findIndex((trip) => trip.id === updatedTrip.id);
+        setHistoricTrips(historicTrips.map((trip) => {
+            if (trip.id === updatedTrip.id) {
+                return { ...trip, ...updatedTrip };
             }
-            return place;
+            return trip;
         }));
     }
 
-    const deletePlace = (placeId) => {
-        setHistoricPlaces((prev) => prev.filter((place) => place.id !== placeId));
+    const deleteTrip = (tripId) => {
+        setHistoricTrips((prev) => prev.filter((trip) => trip.id !== tripId));
     }
 
     useEffect(() => {
-        const loadHistoricPlaces = async () => {
+        const loadHistoricTrips = async () => {
             try {
-                const customResponse = await httpRequest({ url: 'api/historic-places/get-all-by-id', method: 'GET', credentials: 'include', refreshToken: refreshToken });
-                setHistoricPlaces(customResponse.data);
+                const customResponse = await httpRequest({ url: 'api/historic-trips/get-all-by-id', method: 'GET', credentials: 'include', refreshToken: refreshToken });
+                setHistoricTrips(customResponse.data);
                 console.log(customResponse.data);
             } catch (error) {
                 console.log(error);
             }
         }
-        loadHistoricPlaces()
+        loadHistoricTrips()
     }, []);
 
-    const sortedHistoricPlaces = useMemo(() => {
-        return [...historicPlaces].sort((a, b) => {
+    const sortedHistoricTrips = useMemo(() => {
+        return [...historicTrips].sort((a, b) => {
             if (a.year === b.year) return a.month - b.month;
             return a.year - b.year;
         });
-    }, [historicPlaces]);
+    }, [historicTrips]);
 
     return (
         <>
-            <TimelinePlaces sortedHistoricPlaces={sortedHistoricPlaces} />
+            <TimelineTrips sortedTrips={sortedHistoricTrips} />
             <div className='row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 row-cols-xl-6 g-2'>
                 <button className='btn col' onClick={handleAddBtn}>
                     <div className='card h-100 d-flex align-items-center justify-content-center p-3'>
                         <MdOutlineAddLocationAlt size={'50'} />
-                        <p>add a new place</p>
+                        <p>add a new trip</p>
                     </div>
                 </button>
-                {sortedHistoricPlaces.map((place) => {
-                    const words = place.description.split(" ");
+                {sortedHistoricTrips.map((trip, index) => {
+                    const words = trip.description.split(" ");
                     const shortText = words.slice(0, wordLimit).join(" ");
                     const isLong = words.length > wordLimit;
                     const shortDescription = isLong ? (
-                        <span onClick={() => toggleExpand(place.id)}>
+                        <span onClick={() => toggleExpand(trip.id)}>
                             {shortText}...<span className="text-primary" style={{ whiteSpace: "nowrap" }}>{' '}more</span>
                         </span>
                     ) : (
-                        place.description
+                        trip.description
                     );
-                    const longDescription = <span onClick={() => toggleExpand(place.id)}>{place.description}</span>;
+                    const longDescription = <span onClick={() => toggleExpand(trip.id)}>{trip.description}</span>;
                     return (
-                        <div key={place.id} className='col'>
+                        <div key={trip.id} className='col'>
                             <div className="card h-100">
-                                {place.images.length > 0 ? (
-                                    <div id={`carousel-${place.id}`} className="carousel slide" data-bs-ride="carousel">
+                                {Array.isArray(trip.images) && trip.images.length > 0 ? (
+                                    <div id={`carousel-${trip.id}`} className="carousel slide" data-bs-ride="carousel">
                                         <div className="carousel-inner">
-                                            {place.images.map((image, index) => (
+                                            {trip.images.map((image, index) => (
                                                 <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                                                    <img src={image} className='d-block w-100' alt={`City ${place.city}`} style={{ height: "200px", objectFit: "cover" }} />
+                                                    <img loading='lazy' src={image} className='d-block w-100' alt={`City ${trip.city}`} style={{ height: "200px", objectFit: "cover" }} />
                                                 </div>
                                             ))}
                                         </div>
-                                        <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${place.id}`} data-bs-slide="prev">
+                                        <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${trip.id}`} data-bs-slide="prev">
                                             <span className="carousel-control-prev-icon" aria-hidden="true"></span>
                                         </button>
-                                        <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${place.id}`} data-bs-slide="next">
+                                        <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${trip.id}`} data-bs-slide="next">
                                             <span className="carousel-control-next-icon" aria-hidden="true"></span>
                                         </button>
                                     </div>
@@ -134,52 +133,55 @@ export default function HistoricPlaces() {
                                     <div className="d-flex align-items-center ">
                                         <CiLocationOn color='red' size={'2.5rem'} style={{ margin: -8 }} />
                                         <div className="">
-                                            <h5 className="mb-0 ms-2"><strong>{place.city}</strong></h5>
-                                            <p className="mb-0 ms-2">{place.country}</p>
+                                            <h5 className="mb-0 ms-2"><strong>{trip.city}</strong></h5>
+                                            <p className="mb-0 ms-2">{trip.country}</p>
                                         </div>
                                     </div>
                                     <div className='text-dark-emphasis bg-light p-1 rounded mt-2 user-select-none'>
-                                        <CiCalendarDate size={24} /><p className="d-inline ms-2 align-bottom">{place.month >= 10 ? place.month : `0${place.month}`}/{place.year}</p>
+                                        <CiCalendarDate size={24} /><p className="d-inline ms-2 align-bottom">{trip.month >= 10 ? trip.month : `0${trip.month}`}/{trip.year}</p>
                                     </div>
                                     <div className='text-dark-emphasis bg-light p-1 rounded mt-2 user-select-none'>
-                                        <LuNotebookPen /><p className="d-inline ms-2 small">{expanded[place.id] ? longDescription : shortDescription}</p>
+                                        <LuNotebookPen /><p className="d-inline ms-2 small">{expanded[trip.id] ? longDescription : shortDescription}</p>
                                     </div>
-                                    {place.hotel && (
+                                    {trip.hotel && (
                                         <div className='text-dark-emphasis bg-light p-1 rounded mt-2'>
                                             <BiHotel color='258ab9' size={20} />
-                                            <strong className="d-inline ms-2 ">{place.hotel}</strong>
+                                            <strong className="d-inline ms-2 ">{trip.hotel}</strong>
                                         </div>
                                     )}
                                     <div className="text-warning bg-light p-1 rounded mt-2">
-                                        {[...Array(place.score)].map((_, i) => <FaStar key={i} />)}
-                                        {[...Array(5 - place.score)].map((_, i) => <FaRegStar key={i} />)}
+                                        {[...Array(trip.score)].map((_, i) => <FaStar key={i} />)}
+                                        {[...Array(5 - trip.score)].map((_, i) => <FaRegStar key={i} />)}
                                     </div>
                                 </div>
                                 <div className="btn-group justify-content-center">
-                                    <button className='btn border-0' onClick={() => { handleUpdateBtn(place) }}><HiOutlinePencilSquare color='808080' size={30} /></button>
-                                    <button className='btn border-0' onClick={() => { handleDeleteBtn(place) }}><MdDeleteForever color='aa1919' size={30} /></button>
+                                    <button className='btn border-0' onClick={() => { handleUpdateBtn(trip) }}><HiOutlinePencilSquare color='808080' size={30} /></button>
+                                    <button className='btn border-0' onClick={() => { handleDeleteBtn(trip) }}><MdDeleteForever color='aa1919' size={30} /></button>
                                 </div>
                             </div>
                         </div>
                     )
                 })}
             </div>
-            {showUpdateModal && currentPlace && (
-                <UpdateHistoricPlaceModal
+            {showUpdateModal && currentTrip && (
+                <UpdateHistoricTripModal
                     show={showUpdateModal}
                     onHide={() => { setShowUpdateModal(false) }}
-                    onAdd={addPlace}
-                    onUpdate={updatePlace}
-                    currentPlace={currentPlace}
+                    onAdd={addTrip}
+                    onUpdate={updateTrip}
+                    currentTrip={currentTrip}
                     modalRole={modalRole}
+                    type={'historic'}
+                    url={'api/historic-trips/'}
                 />
             )}
-            {showDeleteModal && currentPlace && (
-                <DeletePlaceModal
+            {showDeleteModal && currentTrip && (
+                <DeleteTripModal
                     show={showDeleteModal}
                     onHide={() => { setShowDeleteModal(false) }}
-                    onDelete={deletePlace}
-                    currentPlace={currentPlace}
+                    onDelete={deleteTrip}
+                    currentTrip={currentTrip}
+                    url={'api/historic-trips/delete'}
                 />
             )}
         </>
