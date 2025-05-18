@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import useRefreshToken from '../hooks/useRefreshToken';
 import httpRequest from '../utils/httpRequest';
-import UpdateHistoricTripModal from '../components/updateHistoricTripModal';
+import UpdateTripModal from '../components/updateTripModal';
 import { BiHotel } from "react-icons/bi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { MdDeleteForever } from "react-icons/md";
@@ -11,13 +11,13 @@ import { CiCalendarDate } from "react-icons/ci";
 import DeleteTripModal from './deleteTripModal';
 import TimelineTrips from './timelineTrips';
 
-export default function UpcomingTrips() {
+export default function UpcomingTrips({ defaultImage }) {
     const refreshToken = useRefreshToken();
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [modalRole, setModalRole] = useState(null);
     const [currentTrip, setCurrentTrip] = useState({});
-    const [historicTrips, setHistoricTrips] = useState([]);
+    const [upcomingTrips, setUpcomingTrips] = useState([]);
 
     const handleAddBtn = () => {
         setCurrentTrip({});
@@ -37,12 +37,12 @@ export default function UpcomingTrips() {
     }
 
     const addTrip = (addedTrip) => {
-        setHistoricTrips((prev) => [...prev, addedTrip]);
+        setUpcomingTrips((prev) => [...prev, addedTrip]);
     }
 
     const updateTrip = (updatedTrip) => {
-        const index = historicTrips.findIndex((trip) => trip.id === updatedTrip.id);
-        setHistoricTrips(historicTrips.map((trip) => {
+        const index = upcomingTrips.findIndex((trip) => trip.id === updatedTrip.id);
+        setUpcomingTrips(upcomingTrips.map((trip) => {
             if (trip.id === updatedTrip.id) {
                 return { ...trip, ...updatedTrip };
             }
@@ -51,15 +51,18 @@ export default function UpcomingTrips() {
     }
 
     const deleteTrip = (tripId) => {
-        setHistoricTrips((prev) => prev.filter((trip) => trip.id !== tripId));
+        setUpcomingTrips((prev) => prev.filter((trip) => trip.id !== tripId));
     }
 
     useEffect(() => {
         const loadUpcomingTrips = async () => {
             try {
                 const customResponse = await httpRequest({ url: 'api/upcoming-trips/get-all-by-id', method: 'GET', credentials: 'include', refreshToken: refreshToken });
-                setHistoricTrips(customResponse.data);
-                console.log(customResponse.data);
+                const tripsWithDefaultImage = customResponse.data.map(trip => ({
+                    ...trip,
+                    images: trip.images.length > 0 ? trip.images : [defaultImage, defaultImage],
+                }));
+                setUpcomingTrips(tripsWithDefaultImage);
             } catch (error) {
                 console.log(error);
             }
@@ -68,11 +71,11 @@ export default function UpcomingTrips() {
     }, []);
 
     const sortedUpcomingTrips = useMemo(() => {
-        return [...historicTrips].sort((a, b) => {
+        return [...upcomingTrips].sort((a, b) => {
             if (a.year === b.year) return a.month - b.month;
             return a.year - b.year;
         });
-    }, [historicTrips]);
+    }, [upcomingTrips]);
 
     return (
         <>
@@ -135,7 +138,7 @@ export default function UpcomingTrips() {
                 })}
             </div>
             {showUpdateModal && currentTrip && (
-                <UpdateHistoricTripModal
+                <UpdateTripModal
                     show={showUpdateModal}
                     onHide={() => { setShowUpdateModal(false) }}
                     onAdd={addTrip}

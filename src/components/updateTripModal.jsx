@@ -303,7 +303,6 @@ export default function UpdateHistoricTripModal({ show, onHide, onAdd, onUpdate,
                 showSpinner();
                 const customResponse = await httpRequest({ url: url + 'add', method: 'POST', credentials: 'include', body: newTrip, refreshToken: refreshToken });
                 hideSpinner();
-                console.log(customResponse.data, customResponse.status);
                 if (customResponse.status === 200 || 201) {
                     handleClose();
                     toast.dismiss();

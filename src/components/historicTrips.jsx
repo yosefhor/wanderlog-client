@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import useRefreshToken from '../hooks/useRefreshToken';
 import httpRequest from '../utils/httpRequest';
-import UpdateHistoricTripModal from './updateHistoricTripModal';
+import UpdateHistoricTripModal from './updateTripModal';
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { BiHotel } from "react-icons/bi";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
@@ -13,7 +13,7 @@ import { CiCalendarDate } from "react-icons/ci";
 import DeleteTripModal from './deleteTripModal';
 import TimelineTrips from './timelineTrips';
 
-export default function HistoricTrips() {
+export default function HistoricTrips({defaultImage}) {
     const refreshToken = useRefreshToken();
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -69,8 +69,11 @@ export default function HistoricTrips() {
         const loadHistoricTrips = async () => {
             try {
                 const customResponse = await httpRequest({ url: 'api/historic-trips/get-all-by-id', method: 'GET', credentials: 'include', refreshToken: refreshToken });
-                setHistoricTrips(customResponse.data);
-                console.log(customResponse.data);
+                const tripsWithDefaultImage = customResponse.data.map(trip => ({
+                    ...trip,
+                    images: trip.images.length > 0 ? trip.images : [defaultImage, defaultImage],
+                }));
+                setHistoricTrips(tripsWithDefaultImage);
             } catch (error) {
                 console.log(error);
             }
@@ -110,25 +113,27 @@ export default function HistoricTrips() {
                     return (
                         <div key={trip.id} className='col'>
                             <div className="card h-100">
-                                {Array.isArray(trip.images) && trip.images.length > 0 ? (
-                                    <div id={`carousel-${trip.id}`} className="carousel slide" data-bs-ride="carousel">
-                                        <div className="carousel-inner">
-                                            {trip.images.map((image, index) => (
-                                                <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                                                    <img loading='lazy' src={image} className='d-block w-100' alt={`City ${trip.city}`} style={{ height: "200px", objectFit: "cover" }} />
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${trip.id}`} data-bs-slide="prev">
-                                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        </button>
-                                        <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${trip.id}`} data-bs-slide="next">
-                                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                        </button>
+                                <div id={`carousel-${trip.id}`} className="carousel slide" data-bs-ride="carousel">
+                                    <div className="carousel-inner">
+                                        {trip.images.map((image, index) => (
+                                            <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                                                <img
+                                                    loading='lazy'
+                                                    src={image}
+                                                    className='d-block w-100'
+                                                    alt={`City ${trip.city}`}
+                                                    style={{ height: "200px", objectFit: "cover" }}
+                                                />
+                                            </div>
+                                        ))}
                                     </div>
-                                ) : (
-                                    <p>No images available</p>
-                                )}
+                                    <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${trip.id}`} data-bs-slide="prev">
+                                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    </button>
+                                    <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${trip.id}`} data-bs-slide="next">
+                                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                    </button>
+                                </div>
                                 <div className="card-body">
                                     <div className="d-flex align-items-center ">
                                         <CiLocationOn color='red' size={'2.5rem'} style={{ margin: -8 }} />
