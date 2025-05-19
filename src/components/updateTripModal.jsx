@@ -265,25 +265,47 @@ export default function UpdateHistoricTripModal({ show, onHide, onAdd, onUpdate,
         { value: 'Zambia', label: 'Zambia' },
         { value: 'Zimbabwe', label: 'Zimbabwe' }
     ]
-    const months = [
-        { value: 1, label: 'January' },
-        { value: 2, label: 'February' },
-        { value: 3, label: 'March' },
-        { value: 4, label: 'April' },
-        { value: 5, label: 'May' },
-        { value: 6, label: 'June' },
-        { value: 7, label: 'July' },
-        { value: 8, label: 'August' },
-        { value: 9, label: 'September' },
-        { value: 10, label: 'October' },
-        { value: 11, label: 'November' },
-        { value: 12, label: 'December' },
-    ]
+
+    const { currentMonth, currentYear } = useMemo(() => {
+        const date = new Date();
+        const currentMonth = date.getMonth() + 1; // Months are zero-based in JavaScript
+        const currentYear = date.getFullYear();
+        return { currentMonth, currentYear };
+    }, []);
+
+    const months = useMemo(() => {
+        const monthNames = [
+            { label: "January", value: 1 },
+            { label: "February", value: 2 },
+            { label: "March", value: 3 },
+            { label: "April", value: 4 },
+            { label: "May", value: 5 },
+            { label: "June", value: 6 },
+            { label: "July", value: 7 },
+            { label: "August", value: 8 },
+            { label: "September", value: 9 },
+            { label: "October", value: 10 },
+            { label: "November", value: 11 },
+            { label: "December", value: 12 },
+        ];
+        return monthNames.map(month => ({
+            ...month,
+            isDisabled: type === 'historic'
+                ? newTrip.year === currentYear && month.value > currentMonth
+                : newTrip.year === currentYear && month.value < currentMonth
+        }));
+    }, [newTrip.year]);
+
     const years = useMemo(() =>
-        Array.from({ length: new Date().getFullYear() - 1949 }, (_, i) => ({
-            value: new Date().getFullYear() - i,
-            label: new Date().getFullYear() - i
-        })), []
+        type === 'historic'
+            ? Array.from({ length: currentYear - 1949 }, (_, i) => ({
+                value: currentYear - i,
+                label: currentYear - i
+            }))
+            : Array.from({ length: 2 }, (_, i) => ({
+                value: currentYear + i,
+                label: currentYear + i
+            })), []
     );
 
     const handleClose = () => {
@@ -397,15 +419,28 @@ export default function UpdateHistoricTripModal({ show, onHide, onAdd, onUpdate,
                                 id="InputMonthYear"
                                 placeholder="month"
                                 options={months}
-                                defaultValue={months.find(m => m.value === newTrip.month)}
-
+                                value={months.find(m => m.value === newTrip.month) || null}
+                                isOptionDisabled={(option) => option.isDisabled}
                             />
                         </div>
                         <div className="mb-3 col-7">
                             <span className='text-danger'>*</span>
                             <label htmlFor="InputYear" className="form-label">Year</label>
                             <Select
-                                onChange={(e) => { setNewTrip((prev) => ({ ...prev, year: e.value })) }}
+                                onChange={(e) => {
+                                    const selectedYear = e?.value;
+                                    setNewTrip((prev) => {
+                                        // Reset month if year === current year & selected month inValid
+                                        const invalidMonth = type === 'historic'
+                                            ? selectedYear === currentYear && prev.month > currentMonth
+                                            : selectedYear === currentYear && prev.month < currentMonth;
+                                        return {
+                                            ...prev,
+                                            year: selectedYear,
+                                            month: invalidMonth ? null : prev.month
+                                        };
+                                    });
+                                }}
                                 required
                                 id="InputMonthYear"
                                 placeholder="year"
