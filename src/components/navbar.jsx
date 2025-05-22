@@ -13,10 +13,10 @@ export default function Navbar() {
             <div className="collapse navbar-collapse" id="navbarNav">
                 <ul className="navbar-nav">
                     {isLoggedIn && <li className="nav-item d-flex align-items-center">
-                        <Link className="nav-link mx-4" to="/dashboard">Dashboard</Link><span className="text-muted">|</span>
+                        <Link className="nav-link mx-4" to="/dashboard">Dashboard</Link><span className=" d-none d-lg-block text-muted">|</span>
                     </li>}
                     <li className="nav-item d-flex align-items-center">
-                        <Link className="nav-link mx-4" to="/TravelInfo">Travel Info </Link><span className="text-muted">|</span>
+                        <Link className="nav-link mx-4" to="/TravelInfo">Travel Info </Link><span className=" d-none d-lg-block text-muted">|</span>
                     </li>
                     <li className="nav-item d-flex align-items-center">
                         <Link className="nav-link mx-4" to="/travelDestinations">Travel Destinations</Link>
