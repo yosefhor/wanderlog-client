@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../context/userContext';
+import { AuthContext } from '../context/authContext';
 import { useNavigate } from 'react-router-dom';
 import { useSpinner } from '../context/spinnerContext';
 import { toast } from 'react-toastify';
@@ -9,8 +10,9 @@ import useRefreshToken from "../hooks/useRefreshToken";
 
 export default function Login() {
     const refreshToken = useRefreshToken();
-    const { user, updateUser } = useContext(UserContext);
-    const [localUser, setLocalUser] = useState({ username: user.username, password: user.password });
+    const { username, updateUsername } = useContext(UserContext);
+    const { isLoggedIn, updateIsLoggedIn } = useContext(AuthContext);
+    const [localUser, setLocalUser] = useState({ username: username, password: '' });
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const { showSpinner, hideSpinner } = useSpinner();
@@ -25,7 +27,7 @@ export default function Login() {
     };
 
     const handleNavigate = async (path) => {
-        await updateUser(localUser);
+        await updateUsername(localUser);
         navigate(path);
     };
 
@@ -37,8 +39,8 @@ export default function Login() {
             const customResponse = await httpRequest({ url: 'auth/login', method: 'POST', credentials: 'include', body: localUser, refreshToken: refreshToken });
             hideSpinner();
             if (customResponse.ok) {
-                localStorage.setItem('isLoggedIn', localUser.username);
-                console.log(customResponse.data);
+                updateIsLoggedIn(true);
+                updateUsername(localUser.username);
                 navigate('/dashboard');
             }
             else {
@@ -52,7 +54,6 @@ export default function Login() {
     }
 
     useEffect(() => {
-        const isLoggedIn = localStorage.getItem('isLoggedIn') ? true : false;
         if (isLoggedIn) { navigate('/dashboard') };
     }, [navigate]);
 

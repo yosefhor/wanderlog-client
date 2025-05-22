@@ -323,6 +323,7 @@ export default function UpdateHistoricTripModal({ show, onHide, onAdd, onUpdate,
         } else {
             try {
                 showSpinner();
+                console.log(newTrip);
                 const customResponse = await httpRequest({ url: url + 'add', method: 'POST', credentials: 'include', body: newTrip, refreshToken: refreshToken });
                 hideSpinner();
                 if (customResponse.status === 200 || 201) {
@@ -343,11 +344,12 @@ export default function UpdateHistoricTripModal({ show, onHide, onAdd, onUpdate,
         const form = formRef.current;
         if (!form.checkValidity()) {
             form.reportValidity();
-        } else if (!newTrip.score) {
+        } else if (type === 'historic' && !newTrip.score) {
             setShowScoreAlert('block');
         } else {
             try {
                 showSpinner();
+                console.log(newTrip);
                 const customResponse = await httpRequest({ url: url + 'update', method: 'PUT', credentials: 'include', body: newTrip, refreshToken: refreshToken });
                 hideSpinner();
                 console.log(customResponse.data.updatedTripWithImages);
@@ -420,6 +422,7 @@ export default function UpdateHistoricTripModal({ show, onHide, onAdd, onUpdate,
                                 placeholder="month"
                                 options={months}
                                 value={months.find(m => m.value === newTrip.month) || null}
+                                defaultValue={months.find(m => m.value === newTrip.month) || null}
                                 isOptionDisabled={(option) => option.isDisabled}
                             />
                         </div>
@@ -445,6 +448,7 @@ export default function UpdateHistoricTripModal({ show, onHide, onAdd, onUpdate,
                                 id="InputMonthYear"
                                 placeholder="year"
                                 options={years}
+                                value={years.find(y => y.value === newTrip.year)}
                                 defaultValue={years.find(y => y.value === newTrip.year)}
                             />
                         </div>

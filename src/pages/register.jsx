@@ -10,8 +10,8 @@ import useRefreshToken from "../hooks/useRefreshToken";
 
 export default function Register() {
     const refreshToken = useRefreshToken();
-    const { user, updateUser } = useContext(UserContext);
-    const [localUser, setLocalUser] = useState({ username: user.username, password: user.password });
+    const { username, updateUsername } = useContext(UserContext);
+    const [localUser, setLocalUser] = useState({ username: username, password: '' });
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const [showTerms, setShowTerms] = useState(false);
@@ -26,7 +26,7 @@ export default function Register() {
     };
 
     const handleNavigate = async (path) => {
-        await updateUser(localUser);
+        await updateUsername(localUser);
         navigate(path);
     };
 

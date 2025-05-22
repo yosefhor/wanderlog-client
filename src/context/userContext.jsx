@@ -3,11 +3,11 @@ import React, { createContext, useState } from 'react';
 export const UserContext = createContext();
 
 export default function UserProvider({ children }) {
-  const [user, setUser] = useState({ username: '', password: ''});
-  const updateUser = (newUser) => { setUser(prevUser => ({ ...prevUser, ...newUser })) };
+  const [username, setUsername] = useState('');
+  const updateUsername = (newUsername) => { setUsername(newUsername) };
 
   return (
-    <UserContext.Provider value={{ user, updateUser }}>
+    <UserContext.Provider value={{ username, updateUsername }}>
       {children}
     </UserContext.Provider>
   );

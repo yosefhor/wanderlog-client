@@ -10,7 +10,7 @@ import useRefreshToken from "../hooks/useRefreshToken";
 
 export default function ChangePassword({ showChangePassword, handleClose }) {
     const refreshToken = useRefreshToken();
-    const { updateUser } = useContext(UserContext);
+    const {username } = useContext(UserContext);
     const formRef = useRef(null);
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -24,14 +24,13 @@ export default function ChangePassword({ showChangePassword, handleClose }) {
         } else {
             try {
                 showSpinner();
-                const userDetails = { username: localStorage.getItem('isLoggedIn'), oldPassword: oldPassword, newPassword: newPassword };
+                const userDetails = { username: username, oldPassword: oldPassword, newPassword: newPassword };
                 const customResponse = await httpRequest({ url: 'auth/change-password', method: 'PUT', credentials: 'include', body: userDetails, refreshToken: refreshToken });
                 hideSpinner();
                 if (customResponse.ok) {
                     toast.dismiss();
                     toast.success('the password has been changed');
                     handleClose()
-                    updateUser({ password: userDetails.newPassword });
                 }
                 else {
                     throw new Error(customResponse.statusText);

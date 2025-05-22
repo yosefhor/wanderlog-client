@@ -20,13 +20,13 @@ export default function TimelineTrips({ sortedTrips }) {
     return (
         <div className="overflow-x-auto my-4">
             <div className="d-flex justify-content-around">
-                {groupedByYear.map((group, index) => (
-                    <div className='text-center mx-3'>
-                        <div key={index} className=" text-center d-flex justify-content-around">
-                            {group.trips.map((trip, index) => (
-                                <div key={index} className="text-center">
+                {groupedByYear.map((group) => (
+                    <div key={group.year} className='text-center mx-3'>
+                        <div className=" text-center d-flex justify-content-around">
+                            {group.trips.map((trip) => (
+                                <div key={trip.id} className="text-center">
                                     <OverlayTrigger
-                                        tripment="top"
+                                        placement="top"
                                         overlay={
                                             <Tooltip>
                                                 <strong >{trip.city}</strong><br />

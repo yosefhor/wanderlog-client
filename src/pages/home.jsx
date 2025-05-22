@@ -20,7 +20,7 @@ export default function Home() {
                 }}
             ></div>
             <h1 className='me-sm-3 text-center text-info-emphasis custom_title'>
-                Keep your memories and plan your next trip!
+                Relive your journeys – and dream up the next one
             </h1>
             <Outlet />
         </div>

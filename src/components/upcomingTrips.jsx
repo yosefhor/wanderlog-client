@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useRefreshToken from '../hooks/useRefreshToken';
 import httpRequest from '../utils/httpRequest';
 import UpdateTripModal from '../components/updateTripModal';

@@ -1,22 +1,29 @@
-import React, { useContext, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useSpinner } from '../context/spinnerContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { UserContext } from '../context/userContext';
+import { AuthContext } from '../context/authContext';
 import { VscEye } from 'react-icons/vsc';
 import httpRequest from '../utils/httpRequest';
 import useRefreshToken from "../hooks/useRefreshToken";
 
 export default function DeleteAccount({ showDeleteAccount, handleClose }) {
     const refreshToken = useRefreshToken();
+
     const formRef = useRef(null);
-    const { updateUser } = useContext(UserContext);
+
+    const { username, updateUsername } = useContext(UserContext);
+    const { updateIsLoggedIn } = useContext(AuthContext);
+    const { showSpinner, hideSpinner } = useSpinner();
+
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
     const navigate = useNavigate();
-    const { showSpinner, hideSpinner } = useSpinner();
+
     const handleDeleteAccount = async (e) => {
         const form = formRef.current;
         if (!form.checkValidity()) {
@@ -24,15 +31,15 @@ export default function DeleteAccount({ showDeleteAccount, handleClose }) {
         } else {
             try {
                 showSpinner();
-                const user = { username: localStorage.getItem('isLoggedIn'), password: password };
+                const user = { username: username, password: password };
                 const customResponse = await httpRequest({ url: 'auth/delete-account', method: 'DELETE', credentials: 'include', body: user, refreshToken: refreshToken });
                 hideSpinner();
                 if (customResponse.ok) {
                     toast.dismiss();
                     toast.success('the account has been deleted');
-                    localStorage.removeItem('isLoggedIn');
+                    updateIsLoggedIn(false);
                     navigate('/');
-                    updateUser({ username: '', password: '' });
+                    updateUsername('');
                 }
                 else {
                     throw new Error(customResponse.statusText);

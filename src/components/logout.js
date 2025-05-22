@@ -1,12 +1,15 @@
 import { toast } from 'react-toastify';
 import { useSpinner } from '../context/spinnerContext';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/authContext';
 import useRefreshToken from '../hooks/useRefreshToken';
 import httpRequest from '../utils/httpRequest';
+import { useContext } from 'react';
 
 export function useLogout() {
     const refreshToken = useRefreshToken();
     const navigate = useNavigate();
+    const { updateIsLoggedIn } = useContext(AuthContext);
     const { showSpinner, hideSpinner } = useSpinner();
     const logout = async () => {
 
@@ -26,7 +29,7 @@ export function useLogout() {
             toast.dismiss();
             toast.error(`${error.message}`);
         } finally {
-            localStorage.removeItem('isLoggedIn');
+            updateIsLoggedIn(false)
             navigate('/');
         }
     };
