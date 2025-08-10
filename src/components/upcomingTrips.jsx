@@ -37,7 +37,11 @@ export default function UpcomingTrips({ defaultImage }) {
     }
 
     const addTrip = (addedTrip) => {
-        setUpcomingTrips((prev) => [...prev, addedTrip]);
+        const tripWithImages = {
+            ...addedTrip,
+            images: addedTrip.images && addedTrip.images.length > 0 ? addedTrip.images : [defaultImage, defaultImage],
+        };
+        setUpcomingTrips((prev) => [...prev, tripWithImages]);
     }
 
     const updateTrip = (updatedTrip) => {

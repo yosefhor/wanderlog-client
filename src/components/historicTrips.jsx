@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useRefreshToken from '../hooks/useRefreshToken';
 import httpRequest from '../utils/httpRequest';
 import UpdateHistoricTripModal from './updateTripModal';
@@ -13,7 +13,7 @@ import { CiCalendarDate } from "react-icons/ci";
 import DeleteTripModal from './deleteTripModal';
 import TimelineTrips from './timelineTrips';
 
-export default function HistoricTrips({defaultImage}) {
+export default function HistoricTrips({ defaultImage }) {
     const refreshToken = useRefreshToken();
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -48,7 +48,11 @@ export default function HistoricTrips({defaultImage}) {
     }
 
     const addTrip = (addedTrip) => {
-        setHistoricTrips((prev) => [...prev, addedTrip]);
+        const tripWithImages = {
+            ...addedTrip,
+            images: addedTrip.images && addedTrip.images.length > 0 ? addedTrip.images : [defaultImage, defaultImage],
+        };
+        setHistoricTrips((prev) => [...prev, tripWithImages]);
     }
 
     const updateTrip = (updatedTrip) => {
