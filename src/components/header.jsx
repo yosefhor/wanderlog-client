@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Navbar from './navbar';
 import UserIcon from './userIcon';
@@ -22,7 +22,7 @@ export default function Header() {
         <div className="d-flex align-items-center position-relative">
           <div className="float-star">
             {isLoggedIn && <UserIcon />}
-            {!isLoggedIn && !isHomePage && < LoginBtn />}
+            {!isLoggedIn && < LoginBtn />}
           </div>
           <div className=" position-absolute start-50 translate-middle-x">
             <Link
