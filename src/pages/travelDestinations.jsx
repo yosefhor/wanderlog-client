@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Button } from 'react-bootstrap';
-import italy from '../italy.webp';
-import japan from '../japan.webp';
-import iceland from '../iceland.webp';
+import italy from '../pictures/italy.webp';
+import japan from '../pictures/japan.webp';
+import iceland from '../pictures/iceland.webp';
 
 export default function TravelDestinations() {
     const destinations = [

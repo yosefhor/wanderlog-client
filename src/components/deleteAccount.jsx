@@ -34,16 +34,18 @@ export default function DeleteAccount({ showDeleteAccount, handleClose }) {
                 const user = { username: username, password: password };
                 const customResponse = await httpRequest({ url: 'auth/delete-account', method: 'DELETE', credentials: 'include', body: user, refreshToken: refreshToken });
                 hideSpinner();
-                if (customResponse.ok) {
-                    toast.dismiss();
-                    toast.success('the account has been deleted');
-                    updateIsLoggedIn(false);
-                    navigate('/');
-                    updateUsername('');
-                }
-                else {
+
+                if (!customResponse.ok) {
                     throw new Error(customResponse.statusText);
                 }
+
+                toast.dismiss();
+                toast.success('the account has been deleted');
+                updateIsLoggedIn(false);
+                updateUsername('');
+                localStorage.removeItem('username');
+                navigate('/');
+                updateUsername('');
             } catch (error) {
                 hideSpinner();
                 toast.dismiss();

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../context/userContext';
 import { AuthContext } from '../context/authContext';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +27,7 @@ export default function Login() {
     };
 
     const handleNavigate = async (path) => {
-        await updateUsername(localUser);
+        await updateUsername(localUser.username);
         navigate(path);
     };
 

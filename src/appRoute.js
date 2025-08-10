@@ -1,4 +1,3 @@
-import React from 'react';
 import UserProvider from './context/userContext.jsx';
 import AuthProvider from './context/authContext.jsx';
 import SpinnerProvider from './context/spinnerContext.jsx';

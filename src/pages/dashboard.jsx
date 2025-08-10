@@ -1,7 +1,7 @@
 import React from 'react';
 import HistoricTrips from '../components/historicTrips';
 import UpcomingTrips from '../components/upcomingTrips';
-import defaultImage from '../defaultImage .webp';
+import defaultImage from '../pictures/defaultImage.webp';
 
 export default function Dashboard() {
 

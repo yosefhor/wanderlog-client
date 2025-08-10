@@ -18,7 +18,8 @@ export default function AuthProvider({ children }) {
     };
 
     const { username, updateUsername } = useContext(UserContext);
-
+    
+    //sync username & isLoggedIn with localStorage:
     useEffect(() => {
         const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
         if (storedIsLoggedIn === 'true' && !isLoggedIn) {

@@ -10,12 +10,13 @@ import useRefreshToken from "../hooks/useRefreshToken";
 
 export default function Register() {
     const refreshToken = useRefreshToken();
+    const navigate = useNavigate();
     const { username, updateUsername } = useContext(UserContext);
     const [localUser, setLocalUser] = useState({ username: username, password: '' });
     const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
     const [showTerms, setShowTerms] = useState(false);
     const { showSpinner, hideSpinner } = useSpinner();
+
     const handleInputChange = (e) => {
         let { name, value } = e.target;
         value = value.replace(/\s+/g, ' ');
@@ -24,9 +25,9 @@ export default function Register() {
             [name]: value,
         }));
     };
-
+    
     const handleNavigate = async (path) => {
-        await updateUsername(localUser);
+        await updateUsername(localUser.username);
         navigate(path);
     };
 
